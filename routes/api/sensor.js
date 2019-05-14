@@ -33,28 +33,8 @@ router.delete("/", (req, res) => {
 		})
 });
 
-router.put("/motion", (req, res) => {
-	let points = [];
-
-	if ("motionData" in req.body) {
-		req.body.motionData.forEach(data => {
-			const entry = {
-				measurement: "motion",
-				fields: {
-					accelerationX: data.accX,
-					accelerationY: data.accY,
-					accelerationZ: data.accZ
-				},
-				timestamp: data.time
-			};
-
-			points = [...points, entry];
-		});
-	}
-
-	console.log(points);
-
-	influx.writePoints(points, {database: "sensor", precision: "ms"})
+router.put("/", (req, res) => {
+	influx.writePoints(res.body.data, {database: "sensor", precision: "ms"})
 		.then(() => {
 			console.log("Successfully added measurement to database.");
 			res.json("Added measurement.");

@@ -4,7 +4,6 @@ const sensors = require("./routes/api/sensor");
 const cors = require("cors");
 const path = require("path");
 
-
 const app = express();
 
 // Bodyparser Middleware
