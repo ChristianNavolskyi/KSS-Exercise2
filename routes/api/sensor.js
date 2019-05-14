@@ -21,33 +21,43 @@ router.get("/:measurement", (req, res) => {
 		})
 });
 
-router.put("/motion", (req, res) => {
-	const time = req.body.time;
-	const accelerationX = req.body.accX;
-	const accelerationY = req.body.accY;
-	const accelerationZ = req.body.accZ;
-	const source = req.body.source;
+router.delete("/", (req, res) => {
+	influx.dropDatabase("sensor")
+		.then(value => {
+			console.log(value);
+			influx.createDatabase("sensor");
+			res.json({success: true, message: "Successfully cleared sensor database", data: value});
+		})
+		.catch(err => {
+			res.status(500).json({success: false, message: "Error dropping database sensor", data: err});
+		})
+});
 
-	influx.writePoints([
-			{
+router.put("/motion", (req, res) => {
+	let points = [];
+
+	if ("motionData" in req.body) {
+		req.body.motionData.forEach(data => {
+			const entry = {
 				measurement: "motion",
 				fields: {
-					accelerationX: accelerationX,
-					accelerationY: accelerationY,
-					accelerationZ: accelerationZ,
-					time: time
+					accelerationX: data.accX,
+					accelerationY: data.accY,
+					accelerationZ: data.accZ
 				},
-				tags: {
-					source: source
-				}
-			}
-		],
-		{
-			database: "sensor"
-		})
+				timestamp: data.time
+			};
+
+			points = [...points, entry];
+		});
+	}
+
+	console.log(points);
+
+	influx.writePoints(points, {database: "sensor", precision: "ms"})
 		.then(() => {
 			console.log("Successfully added measurement to database.");
-			req.json("Added measurement.");
+			res.json("Added measurement.");
 		})
 		.catch(err => {
 			console.error("Could not save measurement to database.");
@@ -56,24 +66,5 @@ router.put("/motion", (req, res) => {
 		})
 });
 
-
-// @route 	POST api/users
-// @desc 	Create a user
-// @access 	Public
-router.put("/", (req, res) => {
-
-	User.updateOne(
-		{_id: req.params.id},
-		{"$push": {"breath": breath}})
-		.then(result => {
-			res.status(201).json({success: true, message: "Breath value appended successfully", data: result});
-			notifyDataAdded(req.params.id);
-			pusher.trigger(channel, "breath-value-added", {
-				id: req.params.id,
-				breath: breath
-			})
-		})
-		.catch(err => res.status(500).json({success: false, message: "Could not append value", data: err}));
-});
 
 module.exports = router;

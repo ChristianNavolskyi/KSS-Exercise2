@@ -1,12 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const path = require("path");
 const sensors = require("./routes/api/sensor");
+const cors = require("cors");
+const path = require("path");
+
 
 const app = express();
 
 // Bodyparser Middleware
 app.use(bodyParser.json());
+
+
+// Cors to use from frontend
+app.use(cors());
 
 
 // Routes

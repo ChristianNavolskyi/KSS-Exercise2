@@ -1,9 +1,31 @@
 import React, {Component} from "react";
 import {Form, FormGroup, Label, Input} from "reactstrap";
 import {Grid, Cell} from "styled-css-grid";
-
+import {uploadMotionData} from "../actions/sensorActions";
+import Button from "reactstrap/es/Button";
 
 const motionEvent = "devicemotion";
+let motion = [];
+
+
+const appendMotionData = data => {
+	motion = [...motion, data];
+};
+
+const addTestData = () => {
+	console.log("Adding test data");
+
+	appendMotionData({accX: -1, accY: -1, accZ: -1, time: Date.now()});
+};
+
+function sendMotionData() {
+	const dataToUpload = {motionData: [...motion]};
+	motion = [];
+
+	console.log(dataToUpload);
+
+	uploadMotionData(dataToUpload);
+}
 
 class KSSForm extends Component {
 	state = {
@@ -27,7 +49,7 @@ class KSSForm extends Component {
 
 	enableDeviceMotionListener = () => {
 		if (window.DeviceMotionEvent) {
-			window.addEventListener(motionEvent, this.handleDeviceOrientation);
+			window.addEventListener(motionEvent, this.handleDeviceMotion);
 			this.setText("Enabled");
 		} else {
 			this.setText("Device motion events not supported");
@@ -36,16 +58,22 @@ class KSSForm extends Component {
 
 	disableDeviceMotionListener = () => {
 		if (window.DeviceMotionEvent) {
-			window.removeEventListener(motionEvent, this.handleDeviceOrientation);
+			window.removeEventListener(motionEvent, this.handleDeviceMotion);
 			this.setText("Disabled");
 		} else {
 			this.setText("Device motion events not supported");
 		}
 	};
 
-	handleDeviceOrientation = (window, event) => {
-		document.trigger(motionEvent);
-		this.setText(event.acceleration.x);
+	handleDeviceMotion = (window, event) => {
+		const acceleration = event.acceleration;
+		const motionData = {accX: acceleration.x, accY: acceleration.y, accZ: acceleration.z, time: Date.now()};
+
+		appendMotionData(motionData);
+
+		if (motion.length > 20) {
+			sendMotionData();
+		}
 	};
 
 	setText = (text) => {
@@ -67,10 +95,24 @@ class KSSForm extends Component {
 						</Form>
 					</Cell>
 					<Cell>
-						<label className="switch">
-							<input type="checkbox" onClick={this.handleChange}/>
-							<span className="slider round"/>
-						</label>
+						<Grid columns={"20% 40% 40%"} justifyContent="space-between">
+							<Cell>
+								<label className="switch">
+									<input type="checkbox" onClick={this.handleChange}/>
+									<span className="slider round"/>
+								</label>
+							</Cell>
+							<Cell>
+								<Button style={{width: "100%"}} onClick={addTestData}>
+									Add test motion
+								</Button>
+							</Cell>
+							<Cell>
+								<Button style={{width: "100%"}} onClick={sendMotionData}>
+									Upload motion
+								</Button>
+							</Cell>
+						</Grid>
 					</Cell>
 					<Cell>
 						{this.state.text}

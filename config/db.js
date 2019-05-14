@@ -5,17 +5,15 @@ const influx = new Influx.InfluxDB({
 	database: "sensor",
 	port: 8086,
 
-	schema: [
-		{
-			measurement: "motion",
-			fields: {
-				accelerationX: Influx.FieldType.FLOAT,
-				accelerationY: Influx.FieldType.FLOAT,
-				accelerationZ: Influx.FieldType.FLOAT
-			},
-			tags: ["source"]
+	schema: [{
+		measurement: "motion",
+		tags: ["source"],
+		fields: {
+			accelerationX: Influx.FieldType.FLOAT,
+			accelerationY: Influx.FieldType.FLOAT,
+			accelerationZ: Influx.FieldType.FLOAT
 		}
-	]
+	}]
 });
 
 influx.getDatabaseNames()
