@@ -34,9 +34,8 @@ router.delete("/", (req, res) => {
 });
 
 router.put("/", (req, res) => {
-	influx.writePoints(res.body.data, {database: "sensor", precision: "ms"})
+	influx.writePoints(req.body.data, {database: "sensor", precision: "ms"})
 		.then(() => {
-			console.log("Successfully added measurement to database.");
 			res.json("Added measurement.");
 		})
 		.catch(err => {
@@ -45,6 +44,5 @@ router.put("/", (req, res) => {
 			res.status(500).json({success: false, message: "Could not save measurement", data: err});
 		})
 });
-
 
 module.exports = router;

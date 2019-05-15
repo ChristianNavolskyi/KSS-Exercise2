@@ -25,12 +25,10 @@ class KSSForm extends Component {
 
 	enableDeviceMotionListener = () => {
 		enableDeviceEvents();
-		console.log("Enable listeners")
 	};
 
 	disableDeviceMotionListener = () => {
 		disableDeviceEvents();
-		console.log("Disable listeners")
 	};
 
 	render() {

@@ -8,7 +8,7 @@ let motion = [];
 let light = [];
 let orientation = [];
 
-const handleMotionEvent = (window, event) => {
+const handleMotionEvent = event => {
 	motion = [...motion, {
 		measurement: "motion",
 		fields: {
@@ -27,7 +27,7 @@ const handleMotionEvent = (window, event) => {
 	}
 };
 
-const handleLightEvent = (window, event) => {
+const handleLightEvent = event => {
 	light = [...light, {
 		measurement: "light",
 		fields: {
@@ -44,7 +44,7 @@ const handleLightEvent = (window, event) => {
 	}
 };
 
-const handleOrientationEvent = (window, event) => {
+const handleOrientationEvent = event => {
 	orientation = [...orientation, {
 		measurement: "orientation",
 		fields: {

@@ -7,7 +7,7 @@ import axios from "axios";
 export const uploadData = data => {
 	console.log("Uploading data");
 
-	axios.put("http://localhost:5000/api/sensor/", data)
+	axios.put("/api/sensor/", data)
 		.then(res => {
 			console.log("Successfully send data to backend");
 			console.log(res);
