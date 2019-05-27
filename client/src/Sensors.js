@@ -8,9 +8,17 @@ let motion = [];
 let light = [];
 let orientation = [];
 
-const handleMotionEvent = event => {
+const handleMotionEvent = (context, name, event) => {
+	console.log(context);
+	console.log(name);
+	console.log(event);
+
 	motion = [...motion, {
 		measurement: "motion",
+		tags: {
+			context: context,
+			name: name
+		},
 		fields: {
 			accelerationX: event.acceleration.x,
 			accelerationY: event.acceleration.y,
@@ -19,7 +27,7 @@ const handleMotionEvent = event => {
 		timestamp: Date.now()
 	}];
 
-	if (motion.length > 20) {
+	if (motion.length > 50) {
 		const data = {data: [...motion]};
 		motion = [];
 
@@ -27,16 +35,20 @@ const handleMotionEvent = event => {
 	}
 };
 
-const handleLightEvent = event => {
+const handleLightEvent = (context, name, event) => {
 	light = [...light, {
 		measurement: "light",
+		tags: {
+			context: context,
+			name: name
+		},
 		fields: {
 			value: event.value
 		},
 		timestamp: Date.now()
 	}];
 
-	if (light.length > 20) {
+	if (light.length > 50) {
 		const data = {data: [...light]};
 		light = [];
 
@@ -44,9 +56,13 @@ const handleLightEvent = event => {
 	}
 };
 
-const handleOrientationEvent = event => {
+const handleOrientationEvent = (context, name, event) => {
 	orientation = [...orientation, {
 		measurement: "orientation",
+		tags: {
+			context: context,
+			name: name
+		},
 		fields: {
 			absolute: event.absolute,
 			alpha: event.alpha,
@@ -56,7 +72,7 @@ const handleOrientationEvent = event => {
 		timestamp: Date.now()
 	}];
 
-	if (orientation.length > 20) {
+	if (orientation.length > 50) {
 		const data = {data: [...orientation]};
 		orientation = [];
 
@@ -64,19 +80,34 @@ const handleOrientationEvent = event => {
 	}
 };
 
-export const enableDeviceEvents = () => {
+export const enableDeviceEvents = (context, name) => {
+	let result = [];
+
 	if (window.DeviceMotionEvent) {
-		window.addEventListener(motionEvent, handleMotionEvent);
+		window.addEventListener(motionEvent, (evt) => handleMotionEvent(context, name, evt));
 		console.log("Added motion event listener");
+		result = [...result, {name: "motion", active: true}]
+	} else {
+		result = [...result, {name: "motion", active: false}]
 	}
+
 	if (window.DeviceLightEvent) {
-		window.addEventListener(lightEvent, handleLightEvent);
+		window.addEventListener(lightEvent, (evt) => handleLightEvent(context, name, evt));
 		console.log("Added light event listener");
+		result = [...result, {name: "light", active: true}]
+	} else {
+		result = [...result, {name: "light", active: false}]
 	}
+
 	if (window.DeviceOrientationEvent) {
-		window.addEventListener(orientationEvent, handleOrientationEvent);
+		window.addEventListener(orientationEvent, (evt) => handleOrientationEvent(context, name, evt));
 		console.log("Added orientation event listener");
+		result = [...result, {name: "orientation", active: true}]
+	} else {
+		result = [...result, {name: "orientation", active: false}]
 	}
+
+	return result
 };
 
 export const disableDeviceEvents = () => {

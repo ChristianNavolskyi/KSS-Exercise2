@@ -13,7 +13,7 @@ export const uploadData = data => {
 			console.log(res);
 		})
 		.catch(err => {
-			console.error("Error sending data to backend");
-			console.error(err)
+			console.log("Error sending data to backend");
+			console.log(err)
 		});
 };

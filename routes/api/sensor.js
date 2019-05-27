@@ -10,6 +10,17 @@ router.get("/", (req, res) => {
 		})
 });
 
+router.get("/all", (req, res) => {
+	influx.query("select * from motion; select * from orientation; select * from light")
+		.catch(err => {
+			console.log(err);
+			res.json({success: false, message: "Could not get measurements", data: err});
+		})
+		.then(result => {
+			res.json(result);
+		})
+});
+
 router.get("/:measurement", (req, res) => {
 	influx.query(`select * from ${req.params.measurement}`)
 		.catch(err => {
@@ -17,7 +28,7 @@ router.get("/:measurement", (req, res) => {
 			res.json({success: false, message: "Could not get measurements", data: err});
 		})
 		.then(result => {
-			res.json(result);
+			res.json({length: result.length, data: result});
 		})
 });
 
