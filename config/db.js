@@ -10,7 +10,7 @@ const influx = new Influx.InfluxDB({
 			measurement: "motion",
 			tags: [
 				"context",
-				"name"
+				"subject"
 			],
 			fields: {
 				accelerationX: Influx.FieldType.FLOAT,
@@ -22,7 +22,7 @@ const influx = new Influx.InfluxDB({
 			measurement: "light",
 			tags: [
 				"context",
-				"name"
+				"subject"
 			],
 			fields: {
 				value: Influx.FieldType.FLOAT
@@ -32,7 +32,7 @@ const influx = new Influx.InfluxDB({
 			measurement: "orientation",
 			tags: [
 				"context",
-				"name"
+				"subject"
 			],
 			fields: {
 				absolute: Influx.FieldType.BOOLEAN,

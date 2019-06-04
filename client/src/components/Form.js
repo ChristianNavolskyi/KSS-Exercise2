@@ -1,7 +1,7 @@
-import React, {Component} from "react";
-import {Label, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
-import {Grid, Row, Col} from "react-flexbox-grid";
-import {disableDeviceEvents, enableDeviceEvents} from "../Sensors";
+import React, { Component } from "react";
+import { Label, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { Grid, Row, Col } from "react-flexbox-grid";
+import { disableDeviceEvents, enableDeviceEvents } from "../Sensors";
 
 
 class KSSForm extends Component {
@@ -78,13 +78,13 @@ class KSSForm extends Component {
 
 	render() {
 		return (
-			<div style={{marginTop: "2rem"}}>
+			<div style={{ marginTop: "2rem" }}>
 				<Grid fluid>
 					<Row center={"xs"}>
 						<Col xs={10} lg={10}>
 							<Label for="name">
 								Name:
-								<Input name="name" id="name" placeholder="Type your name here" value={this.state.name} onChange={this.onNameChange}/>
+								<Input name="name" id="name" placeholder="Type your name here" value={this.state.name} onChange={this.onNameChange} />
 							</Label>
 						</Col>
 					</Row>
@@ -104,10 +104,10 @@ class KSSForm extends Component {
 							</Dropdown>
 						</Col>
 						<Col xs>
-							Sampling:<br/>
+							Sampling:<br />
 							<label className="switch">
-								<input type="checkbox" onClick={this.handleChange} checked={this.state.active}/>
-								<span className="slider round"/>
+								<input type="checkbox" onClick={this.handleChange} checked={this.state.active} />
+								<span className="slider round" />
 							</label>
 						</Col>
 					</Row>
