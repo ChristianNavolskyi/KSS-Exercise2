@@ -6,6 +6,7 @@ import axios from "axios";
  */
 export const uploadData = data => {
 	console.log("Uploading data");
+	console.log(data);
 
 	axios.put("/api/sensor/", data)
 		.then(res => {

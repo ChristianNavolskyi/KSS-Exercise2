@@ -1,43 +1,49 @@
-import React, { Component } from "react";
-import { Label, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
-import { Grid, Row, Col } from "react-flexbox-grid";
-import { disableDeviceEvents, enableDeviceEvents } from "../Sensors";
+import React, {Component} from "react";
+import {Label, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
+import {Grid, Row, Col} from "react-flexbox-grid";
+import {disableDeviceEvents, enableDeviceEvents} from "../Sensors";
 
+
+const contexts = ["Sitting", "Standing", "Walking", "Lying", "Testing"];
+const defaultContext = "Context";
 
 class KSSForm extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			name: null,
+			name: "",
 			active: false,
 			dropdownOpen: false,
-			currentContext: "Context",
+			currentContext: defaultContext,
 			activeSensors: ""
 		};
 	}
 
 	selectContext = (context) => {
+		if (this.state.active) {
+			this.disableDeviceMotionListener();
+		}
+
 		this.setState({
 			currentContext: context
-		})
+		});
 	};
 
 	toggleDropDown = () => {
+		if (this.state.active) {
+			this.disableDeviceMotionListener();
+		}
+
 		this.setState({
-			active: false,
 			dropdownOpen: !this.state.dropdownOpen
-		})
+		});
 	};
 
 	handleChange = () => {
 		const newState = !this.state.active;
 
-		this.setState({
-			active: newState
-		});
-
-		if (newState) {
+		if (newState && this.state.currentContext !== defaultContext && this.state.name !== "") {
 			this.enableDeviceMotionListener();
 		} else {
 			this.disableDeviceMotionListener();
@@ -45,10 +51,13 @@ class KSSForm extends Component {
 	};
 
 	onNameChange = (evt) => {
+		if (this.state.active) {
+			this.disableDeviceMotionListener();
+		}
+
 		this.setState({
-			active: false,
 			name: evt.target.value
-		})
+		});
 	};
 
 	enableDeviceMotionListener = () => {
@@ -64,7 +73,8 @@ class KSSForm extends Component {
 		resultString = resultString.trim();
 
 		this.setState({
-			activeSensors: resultString
+			activeSensors: resultString,
+			active: true
 		});
 	};
 
@@ -72,19 +82,20 @@ class KSSForm extends Component {
 		disableDeviceEvents();
 
 		this.setState({
-			activeSensors: ""
+			activeSensors: "",
+			active: false
 		});
 	};
 
 	render() {
 		return (
-			<div style={{ marginTop: "2rem" }}>
+			<div style={{marginTop: "2rem"}}>
 				<Grid fluid>
 					<Row center={"xs"}>
 						<Col xs={10} lg={10}>
 							<Label for="name">
 								Name:
-								<Input name="name" id="name" placeholder="Type your name here" value={this.state.name} onChange={this.onNameChange} />
+								<Input name="name" id="name" placeholder="Type your name here" value={this.state.name} onChange={this.onNameChange}/>
 							</Label>
 						</Col>
 					</Row>
@@ -96,18 +107,17 @@ class KSSForm extends Component {
 									{this.state.currentContext}
 								</DropdownToggle>
 								<DropdownMenu>
-									<DropdownItem onClick={() => this.selectContext("Walking")}>Walking</DropdownItem>
-									<DropdownItem onClick={() => this.selectContext("Standing")}>Standing</DropdownItem>
-									<DropdownItem onClick={() => this.selectContext("Sitting")}>Sitting</DropdownItem>
-									<DropdownItem onClick={() => this.selectContext("Lying")}>Lying</DropdownItem>
+									{contexts.map(context => {
+										return (<DropdownItem onClick={() => this.selectContext(context)} key={context}>{context}</DropdownItem>)
+									})}
 								</DropdownMenu>
 							</Dropdown>
 						</Col>
 						<Col xs>
-							Sampling:<br />
+							Sampling:<br/>
 							<label className="switch">
-								<input type="checkbox" onClick={this.handleChange} checked={this.state.active} />
-								<span className="slider round" />
+								<input type="checkbox" onChange={this.handleChange} checked={this.state.active}/>
+								<span className="slider round"/>
 							</label>
 						</Col>
 					</Row>

@@ -1,4 +1,4 @@
-import { uploadData } from "./actions/sensorActions";
+import {uploadData} from "./actions/sensorActions";
 
 const motionEvent = "devicemotion";
 const lightEvent = "devicelight";
@@ -8,10 +8,18 @@ let motion = [];
 let light = [];
 let orientation = [];
 
-const handleMotionEvent = (context, name, event) => {
-	console.log(context);
-	console.log(name);
-	console.log(event);
+let counter = 1;
+
+let context = "";
+let name = "";
+
+const handleMotionEvent = (event) => {
+	if (motion.length > counter) {
+		const data = {data: [...motion]};
+		motion = [];
+
+		uploadData(data);
+	}
 
 	motion = [...motion, {
 		measurement: "motion",
@@ -26,16 +34,16 @@ const handleMotionEvent = (context, name, event) => {
 		},
 		timestamp: Date.now()
 	}];
+};
 
-	if (motion.length > 50) {
-		const data = { data: [...motion] };
-		motion = [];
+const handleLightEvent = (event) => {
+	if (light.length > counter) {
+		const data = {data: [...light]};
+		light = [];
 
 		uploadData(data);
 	}
-};
 
-const handleLightEvent = (context, name, event) => {
 	light = [...light, {
 		measurement: "light",
 		tags: {
@@ -47,16 +55,16 @@ const handleLightEvent = (context, name, event) => {
 		},
 		timestamp: Date.now()
 	}];
+};
 
-	if (light.length > 50) {
-		const data = { data: [...light] };
-		light = [];
+const handleOrientationEvent = (event) => {
+	if (orientation.length > counter) {
+		const data = {data: [...orientation]};
+		orientation = [];
 
 		uploadData(data);
 	}
-};
 
-const handleOrientationEvent = (context, name, event) => {
 	orientation = [...orientation, {
 		measurement: "orientation",
 		tags: {
@@ -71,40 +79,35 @@ const handleOrientationEvent = (context, name, event) => {
 		},
 		timestamp: Date.now()
 	}];
-
-	if (orientation.length > 50) {
-		const data = { data: [...orientation] };
-		orientation = [];
-
-		uploadData(data);
-	}
 };
 
-export const enableDeviceEvents = (context, name) => {
+export const enableDeviceEvents = (context_arg, name_arg) => {
 	let result = [];
+	context = context_arg;
+	name = name_arg;
 
 	if (window.DeviceMotionEvent) {
-		window.addEventListener(motionEvent, (evt) => handleMotionEvent(context, name, evt));
+		window.addEventListener(motionEvent, handleMotionEvent);
 		console.log("Added motion event listener");
-		result = [...result, { name: "motion", active: true }]
+		result = [...result, {name: "motion", active: true}]
 	} else {
-		result = [...result, { name: "motion", active: false }]
+		result = [...result, {name: "motion", active: false}]
 	}
 
 	if (window.DeviceLightEvent) {
-		window.addEventListener(lightEvent, (evt) => handleLightEvent(context, name, evt));
+		window.addEventListener(lightEvent, handleLightEvent);
 		console.log("Added light event listener");
-		result = [...result, { name: "light", active: true }]
+		result = [...result, {name: "light", active: true}]
 	} else {
-		result = [...result, { name: "light", active: false }]
+		result = [...result, {name: "light", active: false}]
 	}
 
 	if (window.DeviceOrientationEvent) {
-		window.addEventListener(orientationEvent, (evt) => handleOrientationEvent(context, name, evt));
+		window.addEventListener(orientationEvent, handleOrientationEvent);
 		console.log("Added orientation event listener");
-		result = [...result, { name: "orientation", active: true }]
+		result = [...result, {name: "orientation", active: true}]
 	} else {
-		result = [...result, { name: "orientation", active: false }]
+		result = [...result, {name: "orientation", active: false}]
 	}
 
 	return result
