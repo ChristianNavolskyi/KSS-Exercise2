@@ -33,15 +33,19 @@ router.get("/:measurement", (req, res) => {
 });
 
 router.delete("/", (req, res) => {
-	influx.dropDatabase("sensor")
-		.then(value => {
-			console.log(value);
-			influx.createDatabase("sensor");
-			res.json({success: true, message: "Successfully cleared sensor database", data: value});
-		})
-		.catch(err => {
-			res.status(500).json({success: false, message: "Error dropping database sensor", data: err});
-		})
+	if (req.body.password === process.env.PASSWORD) {
+		influx.dropDatabase("sensor")
+			.then(value => {
+				console.log(value);
+				influx.createDatabase("sensor");
+				res.json({success: true, message: "Successfully cleared sensor database", data: value});
+			})
+			.catch(err => {
+				res.status(500).json({success: false, message: "Error dropping database sensor", data: err});
+			})
+	} else {
+		res.json({success: false, message: "Please provide the correct password or stop bothering me!"});
+	}
 });
 
 router.put("/", (req, res) => {
