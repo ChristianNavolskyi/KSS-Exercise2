@@ -1,5 +1,3 @@
-import {uploadData} from "./actions/sensorActions";
-
 const motionEvent = "devicemotion";
 const lightEvent = "devicelight";
 const orientationEvent = "deviceorientation";
@@ -13,12 +11,15 @@ let counter = 1;
 let context = "";
 let name = "";
 
+var func = (data) => {
+};
+
 const handleMotionEvent = (event) => {
 	if (motion.length > counter) {
 		const data = {data: [...motion]};
 		motion = [];
 
-		uploadData(data);
+		func(data);
 	}
 
 	motion = [...motion, {
@@ -41,7 +42,7 @@ const handleLightEvent = (event) => {
 		const data = {data: [...light]};
 		light = [];
 
-		uploadData(data);
+		func(data);
 	}
 
 	light = [...light, {
@@ -62,7 +63,7 @@ const handleOrientationEvent = (event) => {
 		const data = {data: [...orientation]};
 		orientation = [];
 
-		uploadData(data);
+		func(data);
 	}
 
 	orientation = [...orientation, {
@@ -81,10 +82,11 @@ const handleOrientationEvent = (event) => {
 	}];
 };
 
-export const enableDeviceEvents = (context_arg, name_arg) => {
+export const enableDeviceEvents = (context_arg, name_arg, functionToExecute) => {
 	let result = [];
 	context = context_arg;
 	name = name_arg;
+	func = functionToExecute;
 
 	if (window.DeviceMotionEvent) {
 		window.addEventListener(motionEvent, handleMotionEvent);
