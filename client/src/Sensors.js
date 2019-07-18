@@ -11,7 +11,7 @@ let counter = 1;
 let context = "";
 let name = "";
 
-var func = (data) => {
+let func = (data) => {
 };
 
 const handleMotionEvent = (event) => {

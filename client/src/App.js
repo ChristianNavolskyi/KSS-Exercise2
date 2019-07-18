@@ -1,8 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, {Component} from 'react';
-import SamplingForm from './components/Sampling';
-import ContextSensitivePage from "./components/context/Sitting";
-import {Route, Link, BrowserRouter as Router, Switch} from "react-router-dom";
+import {Link} from "react-router-dom";
 import Button from "reactstrap/es/Button";
 
 export class App extends Component {
