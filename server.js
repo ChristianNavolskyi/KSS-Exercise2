@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const sensors = require("./routes/api/sensor");
+const Sensor = require("./routes/api/sensor");
 const cors = require("cors");
 const path = require("path");
 
@@ -15,7 +15,19 @@ app.use(cors());
 
 
 // Routes
-app.use("/api/sensor", sensors);
+let host, dbPort;
+
+if ("DB_HOST" in process.env && "DB_PORT" in process.env) {
+	host = process.env.DB_HOST;
+	dbPort = process.env.DB_PORT;
+} else {
+	host = "localhost";
+	dbPort = "8086";
+}
+console.log("Accessing DB via ".concat(host).concat(":").concat(dbPort));
+
+const sensor = new Sensor(host, dbPort);
+app.use("/api/sensor", sensor.router);
 
 
 // Serve static assets if in production
