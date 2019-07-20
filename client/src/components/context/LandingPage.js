@@ -12,6 +12,7 @@ export class LandingPage extends Component {
 			motionStore: [],
 			orientationStore: [],
 			timeBetweenClassifications: 500,
+			doing: "nothing",
 			context: -1,
 			accelerationXMean: null,
 			accelerationXMin: null,
@@ -94,6 +95,10 @@ export class LandingPage extends Component {
 	triggerClassification() {
 		console.log("trigger classification");
 
+		this.setState({
+			doing: "triggered classification"
+		});
+
 		if (this.state.accelerationX != null && this.state.alphaMean != null) {
 			const features = [this.state.accelerationXMean, this.state.accelerationXMin, this.state.accelerationXMax, this.state.accelerationXStd,
 				this.state.accelerationYMean, this.state.accelerationYMin, this.state.accelerationYMax, this.state.accelerationYStd,
@@ -108,6 +113,7 @@ export class LandingPage extends Component {
 			console.log(prediction);
 
 			this.setState({
+				doing: "present classification",
 				context: prediction,
 				accelerationXMean: null,
 				accelerationXMin: null,
@@ -138,30 +144,32 @@ export class LandingPage extends Component {
 	setOrientationFeatures() {
 		console.log("setting orientation features");
 
-		const measurements = this.state.orientationStore.map(entry => entry.measurements);
+		const apply = (fun, ...values) => ({
+			alpha: fun(...values.map(({alpha}) => alpha)),
+			beta: fun(...values.map(({beta}) => beta)),
+			gamma: fun(...values.map(({gamma}) => gamma)),
+		});
+
+		const measurements = this.state.orientationStore.map(entry => ({
+			alpha: entry.measurements.alpha,
+			beta: entry.measurements.beta,
+			gamma: entry.measurements.gamma
+		}));
 		const length = measurements.length;
 
-		const alphaSum = measurements.reduce((acc, entry) => acc + entry.alpha);
-		const betaSum = measurements.reduce((acc, entry) => acc + entry.beta);
-		const gammaSum = measurements.reduce((acc, entry) => acc + entry.gamma);
+		const sums = measurements.reduce((acc, entry) => apply((a, e) => a + e, acc, entry));
+		const means = apply((a) => a / length, sums);
+		const squaredDiffs = measurements.reduce((acc, entry) => apply((a, e, m) => a + Math.pow(e - m, 2), acc, entry, means));
+		const stds = apply((v) => Math.sqrt(v), squaredDiffs);
 
-		// const alphaMean = alphaSum / length;
-		// const alphaStd = this.getStd(measurements, length, (entry) => entry.alpha, alphaMean);
-		//
-		// const betaMean = betaSum / length;
-		// const betaStd = this.getStd(measurements, length, (entry) => entry.beta, betaMean);
-		//
-		// const gammaMean = gammaSum / length;
-		// const gammaStd = this.getStd(measurements, length, (entry) => entry.gamma, gammaMean);
-
-		// this.setState({
-		// 	alphaMean: alphaMean,
-		// 	alphaStd: alphaStd,
-		// 	betaMean: betaMean,
-		// 	betaStd: betaStd,
-		// 	gammaMean: gammaMean,
-		// 	gammaStd: gammaStd
-		// });
+		this.setState({
+			alphaMean: means.alpha,
+			alphaStd: stds.alpha,
+			betaMean: means.beta,
+			betaStd: stds.beta,
+			gammaMean: means.gamma,
+			gammaStd: stds.gamma
+		});
 	}
 
 	setMotionFeatures() {
@@ -222,6 +230,7 @@ export class LandingPage extends Component {
 		return (
 			<div>
 				Let's see what you are currently doing... {this.state.context}
+				<br/>Currently doing: {this.state.doing}
 				<br/>AccelerationXMean: {this.state.accelerationXMean}
 				<br/>AccelerationXMin: {this.state.accelerationXMin}
 				<br/>AccelerationXMax: {this.state.accelerationXMax}
