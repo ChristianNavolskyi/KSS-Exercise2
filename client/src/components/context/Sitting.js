@@ -1,14 +1,10 @@
 import React, {Component} from "react";
-import {Button} from "reactstrap";
-
 
 export class Sitting extends Component {
 	render() {
 		return (
 			<div>
-				<Button>
-					Go to sampling
-				</Button>
+				Now that you are sitting let's see what we can do.
 			</div>
 		)
 	}

@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {svm} from "../../classifier/linear_svm"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
+import {Walking} from "./Walking";
+import {Sitting} from "./Sitting";
 
 export class LandingPage extends Component {
 
@@ -217,11 +219,18 @@ export class LandingPage extends Component {
 	}
 
 	render() {
+		const current = this.state.currentContext;
+		let context;
+
+		if (current === 0) {
+			context = <Sitting/>
+		} else {
+			context = <Walking/>
+		}
 
 		return (
 			<div>
-				Let's see what you are currently doing...
-				<br/><b>{this.state.classifications[this.state.currentContext]}</b>
+				{context}
 			</div>
 		);
 	}
