@@ -4,7 +4,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import {App} from './App';
 import {SamplingForm} from "./components/Sampling";
-import {Sitting} from "./components/context/Sitting";
+import {LandingPage} from "./components/context/LandingPage"
 import {NotFound} from "./components/NotFound";
 import {Route, Link, Switch, BrowserRouter as Router} from "react-router-dom";
 import {Navbar, NavItem, Nav, NavLink} from "reactstrap";
@@ -38,7 +38,7 @@ const routing = (
 			<Switch>
 				<Route exact path="/" component={App}/>
 				<Route path="/sampling" component={SamplingForm}/>
-				<Route path="/context" component={Sitting}/>
+				<Route path="/context" component={LandingPage}/>
 				<Route path="*" component={NotFound}/>
 			</Switch>
 		</div>

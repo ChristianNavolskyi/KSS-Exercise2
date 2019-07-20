@@ -44,6 +44,8 @@ const MLPClassifier = function (hidden, output, layers, weights, bias) {
 					v[i] /= sum;
 				}
 				break;
+			default:
+				break;
 		}
 		return v;
 	};

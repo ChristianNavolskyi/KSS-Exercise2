@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.1",
     "bootstrap": "^4.3.1",
+    "dataframe-js": "^1.4.2",
     "influent": "^0.5.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
