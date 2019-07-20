@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {mlpClassifier} from "../../classifier/mlp"
+import {svm} from "../../classifier/linear_svm"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
 
 export class LandingPage extends Component {
@@ -8,12 +8,11 @@ export class LandingPage extends Component {
 		super(props);
 
 		this.state = {
-			classifier: mlpClassifier,
 			motionStore: [],
 			orientationStore: [],
-			timeBetweenClassifications: 500,
-			doing: "nothing",
-			context: -1,
+			timeBetweenClassifications: 5000,
+			classifications: ["Sitting", "Walking"],
+			currentContext: 0,
 			accelerationXMean: null,
 			accelerationXMin: null,
 			accelerationXMax: null,
@@ -93,13 +92,7 @@ export class LandingPage extends Component {
 	};
 
 	triggerClassification() {
-		console.log("trigger classification");
-
-		this.setState({
-			doing: "triggered classification"
-		});
-
-		if (this.state.accelerationX != null && this.state.alphaMean != null) {
+		if (this.state.accelerationXMean != null && this.state.alphaMean != null) {
 			const features = [this.state.accelerationXMean, this.state.accelerationXMin, this.state.accelerationXMax, this.state.accelerationXStd,
 				this.state.accelerationYMean, this.state.accelerationYMin, this.state.accelerationYMax, this.state.accelerationYStd,
 				this.state.accelerationZMean, this.state.accelerationZMin, this.state.accelerationZMax, this.state.accelerationZStd,
@@ -108,13 +101,10 @@ export class LandingPage extends Component {
 				this.state.betaMean, this.state.betaStd,
 				this.state.gammaMean, this.state.gammaStd];
 
-			console.log("Predicting");
-			const prediction = this.state.classifier.predict(features);
-			console.log(prediction);
+			const prediction = svm.predict(features);
 
 			this.setState({
-				doing: "present classification",
-				context: prediction,
+				currentContext: prediction,
 				accelerationXMean: null,
 				accelerationXMin: null,
 				accelerationXMax: null,
@@ -227,32 +217,11 @@ export class LandingPage extends Component {
 	}
 
 	render() {
+
 		return (
 			<div>
-				Let's see what you are currently doing... {this.state.context}
-				<br/>Currently doing: {this.state.doing}
-				<br/>AccelerationXMean: {this.state.accelerationXMean}
-				<br/>AccelerationXMin: {this.state.accelerationXMin}
-				<br/>AccelerationXMax: {this.state.accelerationXMax}
-				<br/>AccelerationXStd: {this.state.accelerationXStd}
-				<br/>AccelerationYMean: {this.state.accelerationYMean}
-				<br/>AccelerationYMin: {this.state.accelerationYMin}
-				<br/>AccelerationYMax: {this.state.accelerationYMax}
-				<br/>AccelerationYStd: {this.state.accelerationYStd}
-				<br/>AccelerationZMean: {this.state.accelerationZMean}
-				<br/>AccelerationZMin: {this.state.accelerationZMin}
-				<br/>AccelerationZMax: {this.state.accelerationZMax}
-				<br/>AccelerationZStd: {this.state.accelerationZStd}
-				<br/>CombinedMean: {this.state.combinedMean}
-				<br/>CombinedMin: {this.state.combinedMin}
-				<br/>CombinedMax: {this.state.combinedMax}
-				<br/>CombinedStd: {this.state.combinedStd}
-				<br/>AlphaMean: {this.state.alphaMean}
-				<br/>AlphaStd: {this.state.alphaStd}
-				<br/>BetaMean: {this.state.betaMean}
-				<br/>BetaStd: {this.state.betaStd}
-				<br/>GammaMean: {this.state.gammaMean}
-				<br/>GammaStd: {this.state.gammaStd}
+				Let's see what you are currently doing...
+				<br/><b>{this.state.classifications[this.state.currentContext]}</b>
 			</div>
 		);
 	}
