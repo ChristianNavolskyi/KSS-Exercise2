@@ -1,8 +1,10 @@
 import React, {Component} from "react";
+import {Link} from "react-router-dom";
 import {svm} from "../../classifier/linear_svm"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
 import {Walking} from "./Walking";
 import {Sitting} from "./Sitting";
+import Button from "reactstrap/es/Button";
 
 export class LandingPage extends Component {
 
