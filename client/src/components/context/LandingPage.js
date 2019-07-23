@@ -230,7 +230,6 @@ export class LandingPage extends Component {
 
 		return (
 			<div>
-				Walking:
 				<Stationary/>
 				<br/>
 				Sitting:

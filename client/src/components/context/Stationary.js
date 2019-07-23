@@ -1,6 +1,13 @@
 import React, {Component} from "react"
 import axios from "axios"
-import Button from "reactstrap/es/Button";
+import {Dropdown, DropdownItem, DropdownToggle, DropdownMenu} from "reactstrap";
+
+const contexts = {
+	morning: {name: "Morgens", query: "stations"},
+	lunchTime: {name: "Mittags", query: "restaurants"},
+	evening: {name: "Abends", query: "stations"},
+	night: {name: "Nachts", query: "bars"}
+};
 
 export class Stationary extends Component {
 
@@ -13,52 +20,47 @@ export class Stationary extends Component {
 			lng: 0,
 			accuracy: 0,
 			timer: null,
-			note: ""
+			note: "",
+			contextDropdownOpen: false,
+			currentContext: contexts.evening,
 		}
 	}
-
 
 	componentDidMount() {
-		this.startLocationIntervalTask()
-	}
-
-	componentWillUnmount() {
-		this.stopLocationIntervalTask()
-	}
-
-	startLocationIntervalTask() {
-		const timer = setInterval(() => this.getLocation(), 10000);
-
 		this.getLocation();
-
-		this.setState({
-			timer
-		})
+		this.setContextForTime();
 	}
 
-	stopLocationIntervalTask() {
-		clearInterval(this.state.timer);
+	setContextForTime() {
+		const hour = new Date().getHours();
+		let context;
 
-		this.setState({
-			timer: null
-		})
-	}
-
-	toggleRefresh() {
-		if (this.state.timer === null) {
-			this.startLocationIntervalTask();
-			this.setNote("Now refreshing");
-		} else {
-			this.stopLocationIntervalTask();
-			this.setNote("Stopped refreshing");
+		if (0 <= hour && hour < 9) {
+			context = contexts.morning;
+		} else if (9 <= hour && hour < 16) {
+			context = contexts.lunchTime;
+		} else if (16 <= hour && hour < 19) {
+			context = contexts.evening;
+		} else if (19 <= hour && hour <= 24) {
+			context = contexts.night;
 		}
-	}
 
-	setNote(text) {
 		this.setState({
-			note: text
+			currentContext: context
 		});
 	}
+
+	toggleDropdown = () => {
+		let newState = true;
+
+		if (this.state.contextDropdownOpen) {
+			newState = false;
+		}
+
+		this.setState({
+			contextDropdownOpen: newState
+		});
+	};
 
 	getLocation() {
 		const url = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + this.state.key;
@@ -70,35 +72,53 @@ export class Stationary extends Component {
 				lat: res.data.location.lat,
 				lng: res.data.location.lng,
 				accuracy: res.data.accuracy,
-				note: "Location retrieved"
+				note: "Location retrieved",
 			});
 		}).catch(err => {
 			console.log("error");
 			console.log(err);
-			this.setNote(JSON.stringify(err))
+		});
+	}
+
+	changeSelectedContext(context) {
+		this.setState({
+			currentContext: context
 		});
 	}
 
 	render() {
-		console.log("rendering");
 		const latlng = this.state.lat + "," + this.state.lng;
-		const source = "https://www.google.com/maps/embed/v1/view?key=" + this.state.key + "&center=" + latlng;
+		const source = "https://www.google.com/maps/embed/v1/search?key=" + this.state.key + "&center=" + latlng + "&zoom=15&q=" + this.state.currentContext.query;
+
+		let contextsToDisplay = [];
+
+		for (let key in contexts) {
+			const context = contexts[key];
+			console.log(context);
+
+			contextsToDisplay = [...contextsToDisplay, (<DropdownItem onClick={() => this.changeSelectedContext(context)} key={context.name}>{context.name}</DropdownItem>)]
+		}
 
 		return (
 			<div>
 				<p align="center">
 					<iframe
-						style={{"border": "0", "width": "80%", "height": "400px"}}
+						style={{"border": "0", "width": "100%", "height": "400px"}}
 						src={source}
 						title={"Map"}
 						allowFullScreen>
 					</iframe>
 				</p>
-				Location: {this.state.lng}, {this.state.lat}
-				<br/>
-				Note: {this.state.note}
-				<br/>
-				<Button onClick={() => this.toggleRefresh()}>Toggle Refresh</Button>
+				<Dropdown isOpen={this.state.contextDropdownOpen} toggle={this.toggleDropdown}>
+					<p align="center">
+						<DropdownToggle caret style={{"width": "75%"}}>
+							{this.state.currentContext.name}
+						</DropdownToggle>
+					</p>
+					<DropdownMenu>
+						{contextsToDisplay}
+					</DropdownMenu>
+				</Dropdown>
 			</div>
 		);
 	}
