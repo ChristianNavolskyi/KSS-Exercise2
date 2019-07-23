@@ -5,11 +5,11 @@ import * as serviceWorker from './serviceWorker';
 import {App} from './App';
 import {SamplingForm} from "./components/Sampling";
 import {LandingPage} from "./components/context/LandingPage";
+import {Stationary} from "./components/context/Stationary";
 import {Walking} from "./components/context/Walking";
-import {Sitting} from "./components/context/Sitting";
 import {NotFound} from "./components/NotFound";
-import {Route, Link, Switch, BrowserRouter as Router} from "react-router-dom";
 import {Navbar, NavItem, Nav, NavLink} from "reactstrap";
+import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
 
 const linkColor = {
 	color: "gray"
@@ -50,8 +50,8 @@ const routing = (
 			<Switch>
 				<Route exact path="/" component={App}/>
 				<Route path="/sampling" component={SamplingForm}/>
-				<Route path="/context/walking" componente={Walking}/>
-				<Route path="/context/sitting" componente={Sitting}/>
+				<Route path="/context/walking" componente={Stationary}/>
+				<Route path="/context/sitting" componente={Walking}/>
 				<Route path="/context" component={LandingPage}/>
 				<Route component={NotFound}/>
 			</Switch>

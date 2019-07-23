@@ -1,10 +1,8 @@
 import React, {Component} from "react";
-import {Link} from "react-router-dom";
 import {svm} from "../../classifier/linear_svm"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
+import {Stationary} from "./Stationary";
 import {Walking} from "./Walking";
-import {Sitting} from "./Sitting";
-import Button from "reactstrap/es/Button";
 
 export class LandingPage extends Component {
 
@@ -16,7 +14,7 @@ export class LandingPage extends Component {
 			orientationStore: [],
 			timeBetweenClassifications: 5000,
 			classifications: ["Sitting", "Walking"],
-			currentContext: 0,
+			currentContext: 1,
 			accelerationXMean: null,
 			accelerationXMin: null,
 			accelerationXMax: null,
@@ -225,14 +223,18 @@ export class LandingPage extends Component {
 		let context;
 
 		if (current === 0) {
-			context = <Sitting/>
-		} else {
 			context = <Walking/>
+		} else {
+			context = <Stationary/>
 		}
 
 		return (
 			<div>
-				{context}
+				Walking:
+				<Stationary/>
+				<br/>
+				Sitting:
+				<Walking/>
 			</div>
 		);
 	}
