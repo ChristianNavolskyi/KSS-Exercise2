@@ -7,7 +7,9 @@ export class App extends Component {
 	render() {
 		return (
 			<div>
-				<h1>Welcome to my context sensitive system</h1>
+				<div align={"center"}>
+					<h1>Welcome to my context sensitive system</h1>
+				</div>
 				<br/>
 				<div align={"center"}>
 					You can choose between sampling more data to improve our classification here:

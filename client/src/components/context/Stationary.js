@@ -3,10 +3,10 @@ import axios from "axios"
 import {Dropdown, DropdownItem, DropdownToggle, DropdownMenu} from "reactstrap";
 
 const contexts = {
-	morning: {name: "Morgens", query: "stations"},
-	lunchTime: {name: "Mittags", query: "restaurants"},
-	evening: {name: "Abends", query: "stations"},
-	night: {name: "Nachts", query: "bars"}
+	morning: {name: "Morgens", query: "stations", nearText: "diese Haltestellen, damit du schnell zur Arbeit kommst."},
+	lunchTime: {name: "Mittags", query: "restaurants", nearText: "diese Restaurants, damit du etwas leckeres zu essen bekommst."},
+	evening: {name: "Abends", query: "stations", nearText: "diese Haltestellen, damit du schnell nach Hause kommst."},
+	night: {name: "Nachts", query: "bars", nearText: "diese Bars, damit du den Tag schön ausklingen lassen kannst."}
 };
 
 export class Stationary extends Component {
@@ -101,6 +101,7 @@ export class Stationary extends Component {
 		return (
 			<div>
 				<div align="center">
+					<b>Es ist {this.state.currentContext.name} und um dich herum gibt es {this.state.currentContext.nearText}</b>
 					<iframe
 						style={{"border": "0", "width": "100%", "height": "400px"}}
 						src={source}
