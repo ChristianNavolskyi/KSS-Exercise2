@@ -18,41 +18,41 @@ const linkColor = {
 const routing = (
 	<Router>
 		<div>
-			<Navbar color="dark">
+			<Navbar color={"dark"}>
 				<Nav>
 					<NavItem>
-						<Link to="/" style={linkColor}>
-							<NavLink>Home</NavLink>
+						<Link to={"/"} style={linkColor}>
+							<NavLink>App</NavLink>
 						</Link>
 					</NavItem>
 					<NavItem>
-						<Link to="/sampling" style={linkColor}>
+						<Link to={"/sampling"} style={linkColor}>
 							<NavLink>Sampling</NavLink>
 						</Link>
 					</NavItem>
 					<NavItem>
-						<Link to="/context" style={linkColor}>
+						<Link to={"/context"} style={linkColor}>
 							<NavLink>Context</NavLink>
 						</Link>
 					</NavItem>
 					<NavItem>
-						<Link to="/context/walking" style={linkColor}>
+						<Link to={"/context/walking"} style={linkColor}>
 							<NavLink>Walking</NavLink>
 						</Link>
 					</NavItem>
 					<NavItem>
-						<Link to="/context/sitting" style={linkColor}>
-							<NavLink>Sitting</NavLink>
+						<Link to={"/context/stationary"} style={linkColor}>
+							<NavLink>Stationary</NavLink>
 						</Link>
 					</NavItem>
 				</Nav>
 			</Navbar>
 			<Switch>
-				<Route exact path="/" component={App}/>
-				<Route path="/sampling" component={SamplingForm}/>
-				<Route path="/context/walking" componente={Stationary}/>
-				<Route path="/context/sitting" componente={Walking}/>
-				<Route path="/context" component={LandingPage}/>
+				<Route exact path={"/"} component={App}/>
+				<Route path={"/sampling"} component={SamplingForm}/>
+				<Route exact path={"/context"} component={LandingPage}/>
+				<Route path={"/context/walking"} component={Walking}/>
+				<Route path={"/context/stationary"} component={Stationary}/>
 				<Route component={NotFound}/>
 			</Switch>
 		</div>
