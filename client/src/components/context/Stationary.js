@@ -94,27 +94,26 @@ export class Stationary extends Component {
 
 		for (let key in contexts) {
 			const context = contexts[key];
-			console.log(context);
 
 			contextsToDisplay = [...contextsToDisplay, (<DropdownItem onClick={() => this.changeSelectedContext(context)} key={context.name}>{context.name}</DropdownItem>)]
 		}
 
 		return (
 			<div>
-				<p align="center">
+				<div align="center">
 					<iframe
 						style={{"border": "0", "width": "100%", "height": "400px"}}
 						src={source}
 						title={"Map"}
 						allowFullScreen>
 					</iframe>
-				</p>
+				</div>
 				<Dropdown isOpen={this.state.contextDropdownOpen} toggle={this.toggleDropdown}>
-					<p align="center">
+					<div align="center">
 						<DropdownToggle caret style={{"width": "75%"}}>
 							{this.state.currentContext.name}
 						</DropdownToggle>
-					</p>
+					</div>
 					<DropdownMenu>
 						{contextsToDisplay}
 					</DropdownMenu>
