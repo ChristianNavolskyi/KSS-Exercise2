@@ -8,8 +8,8 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"HTTPS=true npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+    "dev": "concurrently \"npm run server\" \"HTTPS=true REACT_APP_MAPS_KEY=$MAPS_KEY npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && REACT_APP_MAPS_KEY=$MAPS_KEY npm run build --prefix client"
   },
   "author": "Christian Navolskyi",
   "license": "MIT",

@@ -2,12 +2,13 @@ import React, {Component} from "react";
 import {Label, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
 import {Grid, Row, Col} from "react-flexbox-grid";
 import {disableDeviceEvents, enableDeviceEvents} from "../Sensors";
+import {uploadData} from "../actions/sensorActions";
 
 
 const contexts = ["Sitting", "Standing", "Walking", "Lying", "Testing"];
 const defaultContext = "Context";
 
-class KSSForm extends Component {
+export class SamplingForm extends Component {
 	constructor(props) {
 		super(props);
 
@@ -61,7 +62,7 @@ class KSSForm extends Component {
 	};
 
 	enableDeviceMotionListener = () => {
-		const result = enableDeviceEvents(this.state.currentContext, this.state.name);
+		const result = enableDeviceEvents(this.state.currentContext, this.state.name, uploadData);
 		let resultString = "";
 
 		result.forEach(sensor => {
@@ -131,5 +132,3 @@ class KSSForm extends Component {
 		);
 	}
 }
-
-export default KSSForm;
