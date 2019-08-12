@@ -42,13 +42,31 @@ module.exports = class Sensor {
 		this.router.delete("/", (req, res) => {
 			if (req.body.password === process.env.PASSWORD) {
 				this.db.dropDatabase("sensor")
+					.catch(err => {
+						res.status(500).json({success: false, message: "Error dropping database sensor", data: err});
+					})
 					.then(value => {
 						console.log(value);
 						this.db.createDatabase("sensor");
 						res.json({success: true, message: "Successfully cleared sensor database", data: value});
+					});
+			} else {
+				res.json({success: false, message: "Please provide the correct password or stop bothering me!"});
+			}
+		});
+
+		this.router.delete("/measurement/:measurement/:subjectName/:context", (req, res) => {
+			if (req.body.password === process.env.PASSWORD) {
+				const measurement = req.params.measurement;
+				const subject = req.params.subjectName;
+				const context = req.params.context;
+
+				this.db.queryRaw(`delete from ${measurement} where subject = '${subject}' and context = '${context}'`)
+					.catch((err) => {
+						res.json({success: false, message: err})
 					})
-					.catch(err => {
-						res.status(500).json({success: false, message: "Error dropping database sensor", data: err});
+					.then(() => {
+						res.json({success: true, message: `deleted ${context} from ${subject} from ${measurement}`})
 					})
 			} else {
 				res.json({success: false, message: "Please provide the correct password or stop bothering me!"});
