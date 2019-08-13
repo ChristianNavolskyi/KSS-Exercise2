@@ -7,6 +7,7 @@ import {uploadData} from "../actions/sensorActions";
 
 const contexts = ["Sitting", "Standing", "Walking", "Lying", "Testing"];
 const defaultContext = "Context";
+let counter = null;
 
 export class SamplingForm extends Component {
 	constructor(props) {
@@ -17,7 +18,9 @@ export class SamplingForm extends Component {
 			active: false,
 			dropdownOpen: false,
 			currentContext: defaultContext,
-			activeSensors: ""
+			activeSensors: "",
+			counterValue: 60,
+			counterVisibility: false,
 		};
 	}
 
@@ -45,10 +48,27 @@ export class SamplingForm extends Component {
 		const newState = !this.state.active;
 
 		if (newState && this.state.currentContext !== defaultContext && this.state.name !== "") {
-			this.enableDeviceMotionListener();
+			this.startSensorTimer();
 		} else {
 			this.disableDeviceMotionListener();
 		}
+	};
+
+	startSensorTimer = () => {
+		this.enableDeviceMotionListener();
+
+		counter = setInterval(() => {
+			if (this.state.counterValue > 0) {
+				this.setState({
+					counterValue: this.state.counterValue - 1,
+				});
+			} else {
+				this.disableDeviceMotionListener();
+				this.setState({
+					counterValue: 60,
+				});
+			}
+		}, 1000)
 	};
 
 	onNameChange = (evt) => {
@@ -75,16 +95,20 @@ export class SamplingForm extends Component {
 
 		this.setState({
 			activeSensors: resultString,
-			active: true
+			active: true,
+			counterVisibility: true
 		});
 	};
 
 	disableDeviceMotionListener = () => {
 		disableDeviceEvents();
 
+		clearInterval(counter);
+
 		this.setState({
 			activeSensors: "",
-			active: false
+			active: false,
+			counterVisibility: false
 		});
 	};
 
@@ -125,6 +149,7 @@ export class SamplingForm extends Component {
 					<Row center={"xs"}>
 						<Col xs>
 							Sampling: {this.state.activeSensors}
+							{this.state.counterVisibility ? (<div><br/> Timer: {this.state.counterValue}</div>) : null}
 						</Col>
 					</Row>
 				</Grid>
