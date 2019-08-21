@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {svm} from "../../classifier/linear_svm"
+import {clf} from "../../classifier/decision_tree"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
 import {Stationary} from "./Stationary";
 import {Walking} from "./Walking";
@@ -12,7 +12,7 @@ export class LandingPage extends Component {
 		this.state = {
 			motionStore: [],
 			orientationStore: [],
-			timeBetweenClassifications: 5000,
+			timeBetweenClassifications: 3000,
 			classifications: ["Sitting", "Walking"],
 			currentContext: 1,
 			accelerationXMean: null,
@@ -103,7 +103,7 @@ export class LandingPage extends Component {
 				this.state.betaMean, this.state.betaStd,
 				this.state.gammaMean, this.state.gammaStd];
 
-			const prediction = svm.predict(features);
+			const prediction = clf.predict(features);
 
 			this.setState({
 				currentContext: prediction,
@@ -199,7 +199,7 @@ export class LandingPage extends Component {
 		const stds = apply((v) => Math.sqrt(v / length), squaredDiffs);
 
 		this.setState({
-			accelerationXMean: sums.x,
+			accelerationXMean: means.x,
 			accelerationXMin: mins.x,
 			accelerationXMax: maxs.x,
 			accelerationXStd: stds.x,
