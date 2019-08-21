@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {clf} from "../../classifier/decision_tree"
+import {prediction} from "../../classifier/random_forest"
 import {disableDeviceEvents, enableDeviceEvents} from "../../Sensors";
 import {Stationary} from "./Stationary";
 import {Walking} from "./Walking";
@@ -14,7 +14,7 @@ export class LandingPage extends Component {
 			orientationStore: [],
 			timeBetweenClassifications: 3000,
 			classifications: ["Sitting", "Walking"],
-			currentContext: 1,
+			currentContext: 0,
 			accelerationXMean: null,
 			accelerationXMin: null,
 			accelerationXMax: null,
@@ -103,10 +103,10 @@ export class LandingPage extends Component {
 				this.state.betaMean, this.state.betaStd,
 				this.state.gammaMean, this.state.gammaStd];
 
-			const prediction = clf.predict(features);
+			const pred = prediction(features);
 
 			this.setState({
-				currentContext: prediction,
+				currentContext: pred,
 				accelerationXMean: null,
 				accelerationXMin: null,
 				accelerationXMax: null,
@@ -223,9 +223,9 @@ export class LandingPage extends Component {
 		let context;
 
 		if (current === 0) {
-			context = <Walking/>
-		} else {
 			context = <Stationary/>
+		} else {
+			context = <Walking/>
 		}
 
 		return (
